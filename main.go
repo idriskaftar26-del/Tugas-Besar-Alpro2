@@ -11,13 +11,13 @@ type Transaksi struct {
 type warga struct {
 	name       string
 	id         int
-	setoran    [100]Transaksi
+	setoran    [1000]Transaksi
 	jumlahLog  int
 	totalBerat float64
 }
 
 var (
-	dataWarga   [100]warga
+	dataWarga   [1000]warga
 	jumlahWarga int
 )
 
@@ -33,23 +33,24 @@ func printFeature() {
 }
 
 func evalChoice(choice string, run *bool) { // main menu
-	if choice == "1" {
+	switch choice {
+	case "1":
 		menuCRUDWarga()
-	} else if choice == "2" {
+	case "2":
 		catatSetoran()
-	} else if choice == "3" {
+	case "3":
 		menuCariWarga()
-	} else if choice == "4" {
+	case "4":
 		menuUrutWarga()
-	} else if choice == "5" {
+	case "5":
 		tampilkanStatistik()
-	} else if choice == "9" {
+	case "9":
 		*run = false
 	}
 }
 
 func main() {
-	var run bool = true
+	run := true
 	for run {
 		var choice string
 		printFeature()
@@ -70,31 +71,32 @@ func CRUDWarga() { // sub menu
 	fmt.Printf("7. Exit\n")
 }
 
-func menuCRUDWarga() { // pilihan sub menu
-	var subRun bool = true
+func menuCRUDWarga() { // sub menu choice
+	subRun := true
 	for subRun {
 		CRUDWarga()
 		fmt.Printf("Masukkan pilihan menu warga: ")
 		var subChoice string
 		fmt.Scan(&subChoice)
 
-		if subChoice == "1" {
+		switch subChoice {
+		case "1":
 			showDataWarga()
-		} else if subChoice == "2" {
+		case "2":
 			tambahWarga()
-		} else if subChoice == "3" {
+		case "3":
 			editWarga()
-		} else if subChoice == "4" {
+		case "4":
 			hapusWarga()
-		} else if subChoice == "7" {
+		case "7":
 			subRun = false
 		}
 	}
 }
 
-func showDataWarga() {
+func showDataWarga() { // printing data warga
 	if jumlahWarga == 0 {
-		fmt.Printf("Belum ada data warga.\n")
+		fmt.Printf("Data warga kosong\n")
 		return
 	}
 	for i := 0; i < jumlahWarga; i++ {
@@ -329,8 +331,8 @@ func tampilkanStatistik() {
 
 	var totalSemua float64 = 0
 
-	jenisSampah := []string{}
-	beratJenisSampah := []float64{}
+	jenisSampah := []string{}       // trash type
+	beratJenisSampah := []float64{} // weight of each type of trash
 
 	for i := 0; i < jumlahWarga; i++ {
 		for j := 0; j < dataWarga[i].jumlahLog; j++ {
@@ -357,24 +359,6 @@ func tampilkanStatistik() {
 			}
 		}
 	}
-
-	// for i := 0; i < jumlahWarga; i++ {
-	// 	for j := 0; j < dataWarga[i].jumlahLog; j++ {
-	// 		tx := dataWarga[i].setoran[j]
-	// 		if tx.whichWeek == targetWeek {
-	// 			totalSemua += tx.berat
-	// 			if tx.jenis == "Sampah Organik" {
-	// 				tOrganik += tx.berat
-	// 			} else if tx.jenis == "Sampah Anorganik" {
-	// 				tAnorganik += tx.berat
-	// 			} else if tx.jenis == "Sampah B3" {
-	// 				tB3 += tx.berat
-	// 			} else if tx.jenis == "Sampah Residu" {
-	// 				tResidu += tx.berat
-	// 			}
-	// 		}
-	// 	}
-	// }
 
 	fmt.Printf("Statistik Akumulasi Sampah Minggu %d:\n", targetWeek)
 	for i := 0; i < len(jenisSampah); i++ {
