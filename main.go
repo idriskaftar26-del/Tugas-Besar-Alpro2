@@ -19,17 +19,16 @@ type warga struct {
 var (
 	dataWarga   [100]warga
 	jumlahWarga int
-	jenisSampah = []string{"Sampah Organik", "Sampah Anorganik", "Sampah B3", "Sampah Residu"}
 )
 
 func printFeature() {
 	fmt.Printf("=========== WASTE-TRACK ===========\n")
-	fmt.Printf("|1. Manajemen Data Warga					|\n")
-	fmt.Printf("|2. Catat Setoran Sampah Mingguan	|\n")
-	fmt.Printf("|3. Cari Data Warga								|\n")
-	fmt.Printf("|4. Urutkan Data Warga						|\n")
-	fmt.Printf("|5. Tampilkan Statistik Mingguan	|\n")
-	fmt.Printf("|9. Exit													|\n")
+	fmt.Printf("|1. Manajemen Data Warga          |\n")
+	fmt.Printf("|2. Catat Setoran Sampah Mingguan |\n")
+	fmt.Printf("|3. Cari Data Warga               |\n")
+	fmt.Printf("|4. Urutkan Data Warga            |\n")
+	fmt.Printf("|5. Tampilkan Statistik Mingguan  |\n")
+	fmt.Printf("|9. Exit                          |\n")
 	fmt.Printf("===================================\n")
 }
 
@@ -184,17 +183,9 @@ func catatSetoran() {
 		return
 	}
 
-	fmt.Printf("Pilih Jenis Sampah:\n")
-	for i := 0; i < 4; i++ {
-		fmt.Printf("%d. %s\n", i+1, jenisSampah[i])
-	}
-	fmt.Printf("Pilihan (1-4): ")
-	var pilJenis int
+	fmt.Printf("Pilih Jenis Sampah (organik, anorganik, b3):\n")
+	var pilJenis string
 	fmt.Scan(&pilJenis)
-	if pilJenis < 1 || pilJenis > 4 {
-		fmt.Printf("Pilihan tidak valid.\n")
-		return
-	}
 
 	fmt.Printf("Masukkan Berat Sampah (kg): ")
 	var berat float64
@@ -212,7 +203,7 @@ func catatSetoran() {
 
 	dataWarga[idx].setoran[posLog] = Transaksi{
 		whichWeek: mgg,
-		jenis:     jenisSampah[pilJenis-1],
+		jenis:     pilJenis,
 		berat:     berat,
 	}
 	dataWarga[idx].jumlahLog++
@@ -337,34 +328,57 @@ func tampilkanStatistik() {
 	fmt.Scan(&targetWeek)
 
 	var totalSemua float64 = 0
-	var tOrganik float64 = 0
-	var tAnorganik float64 = 0
-	var tB3 float64 = 0
-	var tResidu float64 = 0
+
+	jenisSampah := []string{}
+	beratJenisSampah := []float64{}
 
 	for i := 0; i < jumlahWarga; i++ {
 		for j := 0; j < dataWarga[i].jumlahLog; j++ {
 			tx := dataWarga[i].setoran[j]
+			exist := false
+			for k := 0; k < len(jenisSampah); k++ {
+				if jenisSampah[k] == tx.jenis {
+					exist = true
+					break
+				}
+			}
+
+			if !exist { // if the type of the trash not exist, add it
+				jenisSampah = append(jenisSampah, tx.jenis)
+				beratJenisSampah = append(beratJenisSampah, 0)
+			}
 			if tx.whichWeek == targetWeek {
 				totalSemua += tx.berat
-				if tx.jenis == "Sampah Organik" {
-					tOrganik += tx.berat
-				} else if tx.jenis == "Sampah Anorganik" {
-					tAnorganik += tx.berat
-				} else if tx.jenis == "Sampah B3" {
-					tB3 += tx.berat
-				} else if tx.jenis == "Sampah Residu" {
-					tResidu += tx.berat
+				for k := 0; k < len(jenisSampah); k++ {
+					if tx.jenis == jenisSampah[k] {
+						beratJenisSampah[k] += tx.berat
+					}
 				}
 			}
 		}
 	}
 
+	// for i := 0; i < jumlahWarga; i++ {
+	// 	for j := 0; j < dataWarga[i].jumlahLog; j++ {
+	// 		tx := dataWarga[i].setoran[j]
+	// 		if tx.whichWeek == targetWeek {
+	// 			totalSemua += tx.berat
+	// 			if tx.jenis == "Sampah Organik" {
+	// 				tOrganik += tx.berat
+	// 			} else if tx.jenis == "Sampah Anorganik" {
+	// 				tAnorganik += tx.berat
+	// 			} else if tx.jenis == "Sampah B3" {
+	// 				tB3 += tx.berat
+	// 			} else if tx.jenis == "Sampah Residu" {
+	// 				tResidu += tx.berat
+	// 			}
+	// 		}
+	// 	}
+	// }
+
 	fmt.Printf("Statistik Akumulasi Sampah Minggu %d:\n", targetWeek)
-	fmt.Printf("- Sampah Organik: %.2f kg\n", tOrganik)
-	fmt.Printf("- Sampah Anorganik: %.2f kg\n", tAnorganik)
-	fmt.Printf("- Sampah B3: %.2f kg\n", tB3)
-	fmt.Printf("- Sampah Residu: %.2f kg\n", tResidu)
+	for i := 0; i < len(jenisSampah); i++ {
+		fmt.Printf("- Sampah %s: %.2f\n", jenisSampah[i], beratJenisSampah[i])
+	}
 	fmt.Printf("TOTAL KESELURUHAN: %.2f kg\n", totalSemua)
-	fmt.Printf("==============================\n")
 }
