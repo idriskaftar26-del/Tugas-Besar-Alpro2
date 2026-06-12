@@ -11,14 +11,13 @@ type Transaksi struct {
 type warga struct {
 	name       string
 	id         int
-	setoran    [1000]Transaksi
+	setoran    []Transaksi
 	jumlahLog  int
 	totalBerat float64
 }
 
 var (
-	dataWarga   [1000]warga
-	jumlahWarga int
+	dataWarga []warga
 )
 
 func printFeature() {
@@ -95,11 +94,11 @@ func menuCRUDWarga() { // sub menu choice
 }
 
 func showDataWarga() { // printing data warga
-	if jumlahWarga == 0 {
+	if len(dataWarga) == 0 {
 		fmt.Printf("Data warga kosong\n")
 		return
 	}
-	for i := 0; i < jumlahWarga; i++ {
+	for i := 0; i < len(dataWarga); i++ {
 		fmt.Printf(
 			"Nama : %s\nID : %d\nJumlah Log : %d\nTotal Berat : %.2f\n\n",
 			dataWarga[i].name, dataWarga[i].id, dataWarga[i].jumlahLog, dataWarga[i].totalBerat,
@@ -108,7 +107,7 @@ func showDataWarga() { // printing data warga
 }
 
 func findIndexByID(id int) int { // cari index dari warga berdasarkan id
-	for i := 0; i < jumlahWarga; i++ {
+	for i := 0; i < len(dataWarga); i++ {
 		if dataWarga[i].id == id {
 			return i
 		}
@@ -117,10 +116,6 @@ func findIndexByID(id int) int { // cari index dari warga berdasarkan id
 }
 
 func tambahWarga() {
-	if jumlahWarga >= 100 {
-		fmt.Printf("Kapasitas penuh\n")
-		return
-	}
 	var newWarga warga
 	fmt.Printf("Masukkan ID Warga (Angka): ")
 	fmt.Scan(&newWarga.id)
@@ -135,8 +130,7 @@ func tambahWarga() {
 	newWarga.jumlahLog = 0
 	newWarga.totalBerat = 0.0
 
-	dataWarga[jumlahWarga] = newWarga
-	jumlahWarga++
+	dataWarga = append(dataWarga, newWarga)
 	fmt.Printf("Warga berhasil ditambahkan\n")
 }
 
@@ -167,10 +161,12 @@ func hapusWarga() {
 		return
 	}
 
-	for i := idx; i < jumlahWarga-1; i++ {
-		dataWarga[i] = dataWarga[i+1]
-	}
-	jumlahWarga--
+	// for i := idx; i < jumlahWarga-1; i++ {
+	// 	dataWarga[i] = dataWarga[i+1]
+	// }
+	// jumlahWarga--
+
+	dataWarga = append(dataWarga[:idx], dataWarga[idx+1:]...) // updating the dataWarga slice (upacking)
 	fmt.Printf("Data warga berhasil dihapus.\n")
 }
 
@@ -197,20 +193,28 @@ func catatSetoran() {
 	var mgg int
 	fmt.Scan(&mgg)
 
-	posLog := dataWarga[idx].jumlahLog
-	if posLog >= 100 {
-		fmt.Printf("Log transaksi penuh untuk warga ini.\n")
-		return
-	}
+	// posLog := dataWarga[idx].jumlahLog
+	// if posLog >= 100 {
+	// 	fmt.Printf("Log transaksi penuh untuk warga ini.\n")
+	// 	return
+	// }
 
-	dataWarga[idx].setoran[posLog] = Transaksi{
+	newTx := Transaksi{
 		whichWeek: mgg,
 		jenis:     pilJenis,
 		berat:     berat,
 	}
+
+	dataWarga[idx].setoran = append(dataWarga[idx].setoran, newTx)
 	dataWarga[idx].jumlahLog++
 	dataWarga[idx].totalBerat += berat
 	fmt.Printf("Setoran sampah berhasil dicatat.\n")
+
+	// dataWarga[idx].setoran[posLog] = Transaksi{
+	// 	whichWeek: mgg,
+	// 	jenis:     pilJenis,
+	// 	berat:     berat,
+	// }
 }
 
 func menuCariWarga() {
@@ -236,7 +240,7 @@ func menuCariWarga() {
 
 func sequentialSearch(query string) {
 	found := false
-	for i := 0; i < jumlahWarga; i++ {
+	for i := 0; i < len(dataWarga); i++ {
 		if dataWarga[i].name == query {
 			fmt.Printf("[Ditemukan] ID: %d | Nama: %s | Total: %.2f kg\n", dataWarga[i].id, dataWarga[i].name, dataWarga[i].totalBerat)
 			found = true
@@ -248,9 +252,9 @@ func sequentialSearch(query string) {
 }
 
 func binarySearch(queryID int) {
-	for i := 0; i < jumlahWarga-1; i++ {
+	for i := 0; i < len(dataWarga)-1; i++ {
 		minIdx := i
-		for j := i + 1; j < jumlahWarga; j++ {
+		for j := i + 1; j < len(dataWarga); j++ {
 			if dataWarga[j].id < dataWarga[minIdx].id {
 				minIdx = j
 			}
@@ -259,7 +263,7 @@ func binarySearch(queryID int) {
 	}
 
 	low := 0
-	high := jumlahWarga - 1
+	high := len(dataWarga) - 1
 	found := false
 
 	for low <= high {
@@ -300,9 +304,9 @@ func menuUrutWarga() {
 }
 
 func selectionSort() {
-	for i := 0; i < jumlahWarga-1; i++ {
+	for i := 0; i < len(dataWarga)-1; i++ {
 		maxIdx := i
-		for j := i + 1; j < jumlahWarga; j++ {
+		for j := i + 1; j < len(dataWarga); j++ {
 			if dataWarga[j].totalBerat < dataWarga[maxIdx].totalBerat {
 				maxIdx = j
 			}
@@ -312,7 +316,7 @@ func selectionSort() {
 }
 
 func insertionSort() {
-	for i := 1; i < jumlahWarga; i++ {
+	for i := 1; i < len(dataWarga); i++ {
 		key := dataWarga[i]
 		j := i - 1
 		for j >= 0 && dataWarga[j].totalBerat < key.totalBerat {
@@ -334,7 +338,7 @@ func tampilkanStatistik() {
 	jenisSampah := []string{}       // trash type
 	beratJenisSampah := []float64{} // weight of each type of trash
 
-	for i := 0; i < jumlahWarga; i++ {
+	for i := 0; i < len(dataWarga); i++ {
 		for j := 0; j < dataWarga[i].jumlahLog; j++ {
 			tx := dataWarga[i].setoran[j]
 			exist := false
