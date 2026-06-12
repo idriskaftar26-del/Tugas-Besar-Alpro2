@@ -3,9 +3,9 @@ package main
 import "fmt"
 
 type Transaksi struct {
-	whichWeek int
-	jenis     string
-	berat     float64
+	date  string
+	jenis string
+	berat float64
 }
 
 type warga struct {
@@ -23,10 +23,10 @@ var (
 func printFeature() {
 	fmt.Printf("=========== WASTE-TRACK ===========\n")
 	fmt.Printf("|1. Manajemen Data Warga          |\n")
-	fmt.Printf("|2. Catat Setoran Sampah Mingguan |\n")
+	fmt.Printf("|2. Catat Setoran Sampah          |\n")
 	fmt.Printf("|3. Cari Data Warga               |\n")
 	fmt.Printf("|4. Urutkan Data Warga            |\n")
-	fmt.Printf("|5. Tampilkan Statistik Mingguan  |\n")
+	fmt.Printf("|5. Tampilkan Statistik           |\n")
 	fmt.Printf("|9. Exit                          |\n")
 	fmt.Printf("===================================\n")
 }
@@ -189,32 +189,37 @@ func catatSetoran() {
 	var berat float64
 	fmt.Scan(&berat)
 
-	fmt.Printf("Masukkan Minggu Ke (1-4): ")
-	var mgg int
-	fmt.Scan(&mgg)
+	// fmt.Printf("Masukkan Minggu Ke (1-4): ")
+	// var mgg int
+	// fmt.Scan(&mgg)
 
-	// posLog := dataWarga[idx].jumlahLog
-	// if posLog >= 100 {
-	// 	fmt.Printf("Log transaksi penuh untuk warga ini.\n")
-	// 	return
-	// }
+	var tgl, bln, thn int
+	fmt.Printf("Masukkan Tanggal (dd mm yyyy): ")
+	fmt.Scan(&tgl, &bln, &thn)
+
+	tanggalFormat := fmt.Sprintf("%02d-%02d-%04d", tgl, bln, thn) // using sprintf to format the date
 
 	newTx := Transaksi{
-		whichWeek: mgg,
-		jenis:     pilJenis,
-		berat:     berat,
+		date:  tanggalFormat,
+		jenis: pilJenis,
+		berat: berat,
 	}
 
 	dataWarga[idx].setoran = append(dataWarga[idx].setoran, newTx)
 	dataWarga[idx].jumlahLog++
 	dataWarga[idx].totalBerat += berat
-	fmt.Printf("Setoran sampah berhasil dicatat.\n")
+	fmt.Printf("Setoran Sampah berhasil dicatat pada tanggal %s\n", tanggalFormat)
 
-	// dataWarga[idx].setoran[posLog] = Transaksi{
-	// 	whichWeek: mgg,
-	// 	jenis:     pilJenis,
-	// 	berat:     berat,
+	// newTx := Transaksi{
+	// 	date:  mgg,
+	// 	jenis: pilJenis,
+	// 	berat: berat,
 	// }
+
+	// dataWarga[idx].setoran = append(dataWarga[idx].setoran, newTx)
+	// dataWarga[idx].jumlahLog++
+	// dataWarga[idx].totalBerat += berat
+	// fmt.Printf("Setoran sampah berhasil dicatat.\n")
 }
 
 func menuCariWarga() {
@@ -251,28 +256,70 @@ func sequentialSearch(query string) {
 	}
 }
 
+// func binarySearch(queryID int) {
+// 	for i := 0; i < len(dataWarga)-1; i++ {
+// 		minIdx := i
+// 		for j := i + 1; j < len(dataWarga); j++ {
+// 			if dataWarga[j].id < dataWarga[minIdx].id {
+// 				minIdx = j
+// 			}
+// 		}
+// 		dataWarga[i], dataWarga[minIdx] = dataWarga[minIdx], dataWarga[i]
+// 	}
+
+// 	low := 0
+// 	high := len(dataWarga) - 1
+// 	found := false
+
+// 	for low <= high {
+// 		mid := (low + high) / 2
+// 		if dataWarga[mid].id == queryID {
+// 			fmt.Printf("[Ditemukan via Binary] ID: %d | Nama: %s | Total: %.2f kg\n", dataWarga[mid].id, dataWarga[mid].name, dataWarga[mid].totalBerat)
+// 			found = true
+// 			break
+// 		} else if dataWarga[mid].id < queryID {
+// 			low = mid + 1
+// 		} else {
+// 			high = mid - 1
+// 		}
+// 	}
+
+// 	if !found {
+// 		fmt.Printf("Data warga tidak ditemukan.\n")
+// 	}
+// }
+
 func binarySearch(queryID int) {
-	for i := 0; i < len(dataWarga)-1; i++ {
+	//making slice tempData from dataWarga
+	tempData := make([]warga, len(dataWarga))
+
+	// copy it
+	copy(tempData, dataWarga)
+
+	// sorting the tempData to prevent sorting the original dataWarga
+	for i := 0; i < len(tempData)-1; i++ {
 		minIdx := i
-		for j := i + 1; j < len(dataWarga); j++ {
-			if dataWarga[j].id < dataWarga[minIdx].id {
+		for j := i + 1; j < len(tempData); j++ {
+			if tempData[j].id < tempData[minIdx].id {
 				minIdx = j
 			}
 		}
-		dataWarga[i], dataWarga[minIdx] = dataWarga[minIdx], dataWarga[i]
+		tempData[i], tempData[minIdx] = tempData[minIdx], tempData[i]
 	}
 
+	// Binary Search on the tempData
 	low := 0
-	high := len(dataWarga) - 1
+	high := len(tempData) - 1
 	found := false
 
 	for low <= high {
 		mid := (low + high) / 2
-		if dataWarga[mid].id == queryID {
-			fmt.Printf("[Ditemukan via Binary] ID: %d | Nama: %s | Total: %.2f kg\n", dataWarga[mid].id, dataWarga[mid].name, dataWarga[mid].totalBerat)
+		if tempData[mid].id == queryID {
+			fmt.Printf("[Ditemukan via Binary] ID: %d | Nama: %s | Total: %.2f kg\n",
+				tempData[mid].id, tempData[mid].name, tempData[mid].totalBerat)
 			found = true
 			break
-		} else if dataWarga[mid].id < queryID {
+		} else if tempData[mid].id < queryID {
 			low = mid + 1
 		} else {
 			high = mid - 1
@@ -328,32 +375,67 @@ func insertionSort() {
 }
 
 func tampilkanStatistik() {
-	fmt.Printf("\n=== WASTE-TRACK ===\n")
-	fmt.Printf("Masukkan Statistik Minggu Ke (1-4): ")
-	var targetWeek int
-	fmt.Scan(&targetWeek)
+	fmt.Printf("\n=== WASTE-TRACK STATISTIK ===\n")
+	fmt.Printf("1. Statistik Berdasarkan Bulan\n")
+	fmt.Printf("2. Statistik Berdasarkan Tahun\n")
+	fmt.Printf("Pilih filter statistik (1-2): ")
+	var pilihan string
+	fmt.Scan(&pilihan)
+
+	var targetPeriode string
+	var labelPeriode string
+
+	if pilihan == "1" {
+		var bln, thn int
+		fmt.Printf("Masukkan Bulan Statistik (1-12): ")
+		fmt.Scan(&bln)
+		fmt.Printf("Masukkan Tahun Statistik (Contoh: 2026): ")
+		fmt.Scan(&thn)
+
+		// Format target: "-MM-YYYY" (e.g., "-06-2026")
+		targetPeriode = fmt.Sprintf("-%02d-%04d", bln, thn)
+		labelPeriode = fmt.Sprintf("Bulan %02d-%d", bln, thn)
+
+	} else if pilihan == "2" {
+		var thn int
+		fmt.Printf("Masukkan Tahun Statistik (Contoh: 2026): ")
+		fmt.Scan(&thn)
+
+		// Format target: "-YYYY" (e.g., "-2026")
+		targetPeriode = fmt.Sprintf("-%04d", thn)
+		labelPeriode = fmt.Sprintf("Tahun %d", thn)
+
+	} else {
+		fmt.Printf("Pilihan tidak valid.\n")
+		return
+	}
 
 	var totalSemua float64 = 0
-
-	jenisSampah := []string{}       // trash type
-	beratJenisSampah := []float64{} // weight of each type of trash
+	jenisSampah := []string{}
+	beratJenisSampah := []float64{}
 
 	for i := 0; i < len(dataWarga); i++ {
-		for j := 0; j < dataWarga[i].jumlahLog; j++ {
+		for j := 0; j < len(dataWarga[i].setoran); j++ {
 			tx := dataWarga[i].setoran[j]
-			exist := false
-			for k := 0; k < len(jenisSampah); k++ {
-				if jenisSampah[k] == tx.jenis {
-					exist = true
-					break
-				}
-			}
 
-			if !exist { // if the type of the trash not exist, add it
-				jenisSampah = append(jenisSampah, tx.jenis)
-				beratJenisSampah = append(beratJenisSampah, 0)
-			}
-			if tx.whichWeek == targetWeek {
+			// Logika slicing string fleksibel:
+			// Jika filter Bulan: cek apakah 7 karakter terakhir cocok dengan "-06-2026"
+			// Jika filter Tahun: cek apakah 5 karakter terakhir cocok dengan "-2026"
+			if len(tx.date) >= len(targetPeriode) && tx.date[len(tx.date)-len(targetPeriode):] == targetPeriode {
+
+				exist := false
+				for k := 0; k < len(jenisSampah); k++ {
+					if jenisSampah[k] == tx.jenis {
+						exist = true
+						break
+					}
+				}
+
+				if !exist {
+					jenisSampah = append(jenisSampah, tx.jenis)
+					beratJenisSampah = append(beratJenisSampah, 0)
+				}
+
 				totalSemua += tx.berat
 				for k := 0; k < len(jenisSampah); k++ {
 					if tx.jenis == jenisSampah[k] {
@@ -364,9 +446,13 @@ func tampilkanStatistik() {
 		}
 	}
 
-	fmt.Printf("Statistik Akumulasi Sampah Minggu %d:\n", targetWeek)
-	for i := 0; i < len(jenisSampah); i++ {
-		fmt.Printf("- Sampah %s: %.2f\n", jenisSampah[i], beratJenisSampah[i])
+	fmt.Printf("\nStatistik Akumulasi Sampah %s:\n", labelPeriode)
+	if len(jenisSampah) == 0 {
+		fmt.Printf("Tidak ada transaksi pada periode ini.\n")
+	} else {
+		for i := 0; i < len(jenisSampah); i++ {
+			fmt.Printf("- Sampah %s: %.2f kg\n", jenisSampah[i], beratJenisSampah[i])
+		}
 	}
-	fmt.Printf("TOTAL KESELURUHAN: %.2f kg\n", totalSemua)
+	fmt.Printf("TOTAL KESELURUHAN: %.2f kg\n\n", totalSemua)
 }
