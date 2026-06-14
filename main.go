@@ -383,8 +383,9 @@ func tampilkanStatistik() {
 		return
 	}
 
-	var totalSemua float64 = 0
-	beratJenisSampah := []float64{}
+	var totalSemua float64 = 0.0
+	// slice for storing each thrash type's total weight
+	beratJenisSampah := make([]float64, len(jenisSampah))
 
 	for i := 0; i < len(dataWarga); i++ {
 		for j := 0; j < len(dataWarga[i].setoran); j++ {
