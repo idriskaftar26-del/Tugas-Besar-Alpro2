@@ -17,7 +17,8 @@ type warga struct {
 }
 
 var (
-	dataWarga []warga
+	dataWarga   []warga
+	jenisSampah []string
 )
 
 func printFeature() {
@@ -176,9 +177,33 @@ func catatSetoran() {
 		return
 	}
 
-	fmt.Printf("Pilih Jenis Sampah (organik, anorganik, b3):\n")
+	fmt.Printf("\n=== Jenis Sampah yang Terdata ===\n")
+	if len(jenisSampah) == 0 {
+		fmt.Printf("Belum ada jenis sampah yang terdata\n")
+	} else {
+		for i, sampah := range jenisSampah {
+			fmt.Printf("%d. %s\n", i+1, sampah)
+		}
+	}
+
+	fmt.Printf("===============================\n")
+	fmt.Printf("Pilih/Ketik Jenis Sampah (Ketik nama baru jika belum terdaftar):\n")
 	var pilJenis string
 	fmt.Scan(&pilJenis)
+
+	//check if jenis sampah already exist
+	exist := false
+	for _, jenis := range jenisSampah {
+		if jenis == pilJenis {
+			exist = true
+			break
+		}
+	}
+
+	if !exist {
+		jenisSampah = append(jenisSampah, pilJenis)
+		fmt.Printf("Jenis sampah baru '%s' berhasil ditambahkan\n", pilJenis)
+	}
 
 	fmt.Printf("Masukkan Berat Sampah (kg): ")
 	var berat float64
@@ -300,13 +325,13 @@ func menuUrutWarga() {
 
 func selectionSort() {
 	for i := 0; i < len(dataWarga)-1; i++ {
-		maxIdx := i
+		minIdx := i
 		for j := i + 1; j < len(dataWarga); j++ {
-			if dataWarga[j].totalBerat < dataWarga[maxIdx].totalBerat {
-				maxIdx = j
+			if dataWarga[j].totalBerat < dataWarga[minIdx].totalBerat {
+				minIdx = j
 			}
 		}
-		dataWarga[i], dataWarga[maxIdx] = dataWarga[maxIdx], dataWarga[i]
+		dataWarga[i], dataWarga[minIdx] = dataWarga[minIdx], dataWarga[i]
 	}
 }
 
@@ -359,7 +384,6 @@ func tampilkanStatistik() {
 	}
 
 	var totalSemua float64 = 0
-	jenisSampah := []string{}
 	beratJenisSampah := []float64{}
 
 	for i := 0; i < len(dataWarga); i++ {
@@ -370,21 +394,8 @@ func tampilkanStatistik() {
 			// Jika filter Bulan: cek apakah 7 karakter terakhir cocok dengan "-06-2026"
 			// Jika filter Tahun: cek apakah 5 karakter terakhir cocok dengan "-2026"
 			if len(tx.date) >= len(targetPeriode) && tx.date[len(tx.date)-len(targetPeriode):] == targetPeriode {
-
-				exist := false
-				for k := 0; k < len(jenisSampah); k++ {
-					if jenisSampah[k] == tx.jenis {
-						exist = true
-						break
-					}
-				}
-
-				if !exist {
-					jenisSampah = append(jenisSampah, tx.jenis)
-					beratJenisSampah = append(beratJenisSampah, 0)
-				}
-
 				totalSemua += tx.berat
+
 				for k := 0; k < len(jenisSampah); k++ {
 					if tx.jenis == jenisSampah[k] {
 						beratJenisSampah[k] += tx.berat
