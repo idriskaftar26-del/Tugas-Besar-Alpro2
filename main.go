@@ -161,11 +161,6 @@ func hapusWarga() {
 		return
 	}
 
-	// for i := idx; i < jumlahWarga-1; i++ {
-	// 	dataWarga[i] = dataWarga[i+1]
-	// }
-	// jumlahWarga--
-
 	dataWarga = append(dataWarga[:idx], dataWarga[idx+1:]...) // updating the dataWarga slice (upacking)
 	fmt.Printf("Data warga berhasil dihapus.\n")
 }
@@ -189,10 +184,6 @@ func catatSetoran() {
 	var berat float64
 	fmt.Scan(&berat)
 
-	// fmt.Printf("Masukkan Minggu Ke (1-4): ")
-	// var mgg int
-	// fmt.Scan(&mgg)
-
 	var tgl, bln, thn int
 	fmt.Printf("Masukkan Tanggal (dd mm yyyy): ")
 	fmt.Scan(&tgl, &bln, &thn)
@@ -210,16 +201,6 @@ func catatSetoran() {
 	dataWarga[idx].totalBerat += berat
 	fmt.Printf("Setoran Sampah berhasil dicatat pada tanggal %s\n", tanggalFormat)
 
-	// newTx := Transaksi{
-	// 	date:  mgg,
-	// 	jenis: pilJenis,
-	// 	berat: berat,
-	// }
-
-	// dataWarga[idx].setoran = append(dataWarga[idx].setoran, newTx)
-	// dataWarga[idx].jumlahLog++
-	// dataWarga[idx].totalBerat += berat
-	// fmt.Printf("Setoran sampah berhasil dicatat.\n")
 }
 
 func menuCariWarga() {
@@ -255,39 +236,6 @@ func sequentialSearch(query string) {
 		fmt.Printf("Data warga tidak ditemukan.\n")
 	}
 }
-
-// func binarySearch(queryID int) {
-// 	for i := 0; i < len(dataWarga)-1; i++ {
-// 		minIdx := i
-// 		for j := i + 1; j < len(dataWarga); j++ {
-// 			if dataWarga[j].id < dataWarga[minIdx].id {
-// 				minIdx = j
-// 			}
-// 		}
-// 		dataWarga[i], dataWarga[minIdx] = dataWarga[minIdx], dataWarga[i]
-// 	}
-
-// 	low := 0
-// 	high := len(dataWarga) - 1
-// 	found := false
-
-// 	for low <= high {
-// 		mid := (low + high) / 2
-// 		if dataWarga[mid].id == queryID {
-// 			fmt.Printf("[Ditemukan via Binary] ID: %d | Nama: %s | Total: %.2f kg\n", dataWarga[mid].id, dataWarga[mid].name, dataWarga[mid].totalBerat)
-// 			found = true
-// 			break
-// 		} else if dataWarga[mid].id < queryID {
-// 			low = mid + 1
-// 		} else {
-// 			high = mid - 1
-// 		}
-// 	}
-
-// 	if !found {
-// 		fmt.Printf("Data warga tidak ditemukan.\n")
-// 	}
-// }
 
 func binarySearch(queryID int) {
 	//making slice tempData from dataWarga
