@@ -349,32 +349,46 @@ func insertionSort() {
 
 func tampilkanStatistik() {
 	fmt.Printf("\n=== WASTE-TRACK STATISTIK ===\n")
-	fmt.Printf("1. Statistik Berdasarkan Bulan\n")
-	fmt.Printf("2. Statistik Berdasarkan Tahun\n")
-	fmt.Printf("Pilih filter statistik (1-2): ")
+	fmt.Printf("1. Statistik Berdasarkan Minggu\n")
+	fmt.Printf("2. Statistik Berdasarkan Bulan\n")
+	fmt.Printf("3. Statistik Berdasarkan Tahun\n")
+	fmt.Printf("Pilih filter statistik (1-3): ")
 	var pilihan string
 	fmt.Scan(&pilihan)
 
 	var targetPeriode string
 	var labelPeriode string
+	var minggu int
+	filterMinggu := false // flag: apakah perlu cek minggu
 
 	if pilihan == "1" {
+		var bulan, tahun int
+		fmt.Printf("Masukkan Minggu Statistik (1-4): ")
+		fmt.Scan(&minggu)
+		fmt.Printf("Masukkan Bulan Statistik (1-12): ")
+		fmt.Scan(&bulan)
+		fmt.Printf("Masukkan Tahun Statistik (Contoh: 2026): ")
+		fmt.Scan(&tahun)
+
+		targetPeriode = fmt.Sprintf("-%02d-%04d", bulan, tahun)
+		labelPeriode = fmt.Sprintf("Minggu %d, Bulan %02d-%d", minggu, bulan, tahun)
+		filterMinggu = true // aktifkan flag
+
+	} else if pilihan == "2" {
 		var bln, thn int
 		fmt.Printf("Masukkan Bulan Statistik (1-12): ")
 		fmt.Scan(&bln)
 		fmt.Printf("Masukkan Tahun Statistik (Contoh: 2026): ")
 		fmt.Scan(&thn)
 
-		// Format target: "-MM-YYYY" (e.g., "-06-2026")
 		targetPeriode = fmt.Sprintf("-%02d-%04d", bln, thn)
 		labelPeriode = fmt.Sprintf("Bulan %02d-%d", bln, thn)
 
-	} else if pilihan == "2" {
+	} else if pilihan == "3" {
 		var thn int
 		fmt.Printf("Masukkan Tahun Statistik (Contoh: 2026): ")
 		fmt.Scan(&thn)
 
-		// Format target: "-YYYY" (e.g., "-2026")
 		targetPeriode = fmt.Sprintf("-%04d", thn)
 		labelPeriode = fmt.Sprintf("Tahun %d", thn)
 
@@ -384,19 +398,36 @@ func tampilkanStatistik() {
 	}
 
 	var totalSemua float64 = 0.0
-	// slice for storing each thrash type's total weight
 	beratJenisSampah := make([]float64, len(jenisSampah))
 
 	for i := 0; i < len(dataWarga); i++ {
 		for j := 0; j < len(dataWarga[i].setoran); j++ {
 			tx := dataWarga[i].setoran[j]
 
-			// Logika slicing string fleksibel:
-			// Jika filter Bulan: cek apakah 7 karakter terakhir cocok dengan "-06-2026"
-			// Jika filter Tahun: cek apakah 5 karakter terakhir cocok dengan "-2026"
 			if len(tx.date) >= len(targetPeriode) && tx.date[len(tx.date)-len(targetPeriode):] == targetPeriode {
-				totalSemua += tx.berat
 
+				// cek minggu hanya kalau filterMinggu aktif
+				if filterMinggu {
+					var tgl int
+					fmt.Sscanf(tx.date[:2], "%d", &tgl)
+
+					var mingguTx int
+					if tgl >= 1 && tgl <= 7 {
+						mingguTx = 1
+					} else if tgl >= 8 && tgl <= 14 {
+						mingguTx = 2
+					} else if tgl >= 15 && tgl <= 21 {
+						mingguTx = 3
+					} else {
+						mingguTx = 4
+					}
+
+					if mingguTx != minggu {
+						continue // skip transaksi ini, lanjut ke berikutnya
+					}
+				}
+
+				totalSemua += tx.berat
 				for k := 0; k < len(jenisSampah); k++ {
 					if tx.jenis == jenisSampah[k] {
 						beratJenisSampah[k] += tx.berat
@@ -408,7 +439,7 @@ func tampilkanStatistik() {
 
 	fmt.Printf("\nStatistik Akumulasi Sampah %s:\n", labelPeriode)
 	if len(jenisSampah) == 0 {
-		fmt.Printf("Tidak ada transaksi pada periode ini.\n")
+		fmt.Printf("Tidak ada jenis sampah yang terdata.\n")
 	} else {
 		for i := 0; i < len(jenisSampah); i++ {
 			fmt.Printf("- Sampah %s: %.2f kg\n", jenisSampah[i], beratJenisSampah[i])
