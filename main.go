@@ -90,6 +90,7 @@ func menuCRUDWarga() { // sub menu choice
 			hapusWarga()
 		case "7":
 			subRun = false
+			fmt.Println()
 		}
 	}
 }
@@ -167,13 +168,13 @@ func hapusWarga() {
 }
 
 func catatSetoran() {
-	fmt.Printf("Masukkan ID Warga: ")
+	fmt.Printf("\nMasukkan ID Warga: ")
 	var targetID int
 	fmt.Scan(&targetID)
 
 	idx := findIndexByID(targetID)
 	if idx == -1 {
-		fmt.Printf("Warga tidak ditemukan.\n")
+		fmt.Printf("Warga tidak ditemukan.\n\n")
 		return
 	}
 
@@ -246,6 +247,8 @@ func menuCariWarga() {
 		var queryID int
 		fmt.Scan(&queryID)
 		binarySearch(queryID)
+	} else {
+		fmt.Printf("\nPilihan tidak valid.\n\n")
 	}
 }
 
