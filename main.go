@@ -90,15 +90,18 @@ func menuCRUDWarga() { // sub menu choice
 			hapusWarga()
 		case "7":
 			subRun = false
+			fmt.Println()
 		}
 	}
 }
 
 func showDataWarga() { // printing data warga
 	if len(dataWarga) == 0 {
-		fmt.Printf("Data warga kosong\n")
+		fmt.Printf("\nData warga kosong\n")
 		return
 	}
+
+	fmt.Printf("\n=== DATA WARGA ===\n")
 	for i := 0; i < len(dataWarga); i++ {
 		fmt.Printf(
 			"Nama : %s\nID : %d\nJumlah Log : %d\nTotal Berat : %.2f\n\n",
@@ -118,7 +121,7 @@ func findIndexByID(id int) int { // cari index dari warga berdasarkan id
 
 func tambahWarga() {
 	var newWarga warga
-	fmt.Printf("Masukkan ID Warga (Angka): ")
+	fmt.Printf("\nMasukkan ID Warga (Angka): ")
 	fmt.Scan(&newWarga.id)
 
 	if findIndexByID(newWarga.id) != -1 {
@@ -132,48 +135,50 @@ func tambahWarga() {
 	newWarga.totalBerat = 0.0
 
 	dataWarga = append(dataWarga, newWarga)
-	fmt.Printf("Warga berhasil ditambahkan\n")
+	fmt.Printf("\nWarga berhasil ditambahkan\n")
 }
 
 func editWarga() {
-	fmt.Printf("Masukkan ID Warga yang akan diedit: ")
+	fmt.Printf("\nMasukkan ID Warga yang akan diedit: ")
 	var targetID int
 	fmt.Scan(&targetID)
 
 	idx := findIndexByID(targetID)
 	if idx == -1 {
-		fmt.Printf("Warga tidak ditemukan\n")
+		fmt.Printf("\nWarga tidak ditemukan\n")
 		return
 	}
 
 	fmt.Printf("Masukkan Nama Baru: ")
 	fmt.Scan(&dataWarga[idx].name)
-	fmt.Printf("Data warga berhasil diperbarui\n")
+	fmt.Printf("\nData warga berhasil diperbarui\n")
 }
 
 func hapusWarga() {
-	fmt.Printf("Masukkan ID Warga yang akan dihapus: ")
+	fmt.Printf("\nMasukkan ID Warga yang akan dihapus: ")
 	var targetID int
 	fmt.Scan(&targetID)
 
 	idx := findIndexByID(targetID)
 	if idx == -1 {
-		fmt.Printf("Warga tidak ditemukan\n")
+		fmt.Printf("\nWarga tidak ditemukan\n")
 		return
 	}
 
+	fmt.Printf("\nNama: %s\n", dataWarga[idx].name)
+	fmt.Printf("ID: %d\n", dataWarga[idx].id)
 	dataWarga = append(dataWarga[:idx], dataWarga[idx+1:]...) // updating the dataWarga slice (upacking)
 	fmt.Printf("Data warga berhasil dihapus.\n")
 }
 
 func catatSetoran() {
-	fmt.Printf("Masukkan ID Warga: ")
+	fmt.Printf("\nMasukkan ID Warga: ")
 	var targetID int
 	fmt.Scan(&targetID)
 
 	idx := findIndexByID(targetID)
 	if idx == -1 {
-		fmt.Printf("Warga tidak ditemukan.\n")
+		fmt.Printf("Warga tidak ditemukan.\n\n")
 		return
 	}
 
@@ -237,15 +242,17 @@ func menuCariWarga() {
 	fmt.Scan(&sub)
 
 	if sub == "1" {
-		fmt.Printf("Masukkan Nama Warga yang dicari: ")
+		fmt.Printf("\nMasukkan Nama Warga yang dicari: ")
 		var query string
 		fmt.Scan(&query)
 		sequentialSearch(query)
 	} else if sub == "2" {
-		fmt.Printf("Masukkan ID Warga yang dicari: ")
+		fmt.Printf("\nMasukkan ID Warga yang dicari: ")
 		var queryID int
 		fmt.Scan(&queryID)
 		binarySearch(queryID)
+	} else {
+		fmt.Printf("\nPilihan tidak valid.\n\n")
 	}
 }
 
@@ -253,7 +260,7 @@ func sequentialSearch(query string) {
 	found := false
 	for i := 0; i < len(dataWarga); i++ {
 		if dataWarga[i].name == query {
-			fmt.Printf("[Ditemukan] ID: %d | Nama: %s | Total: %.2f kg\n", dataWarga[i].id, dataWarga[i].name, dataWarga[i].totalBerat)
+			fmt.Printf("\n[Ditemukan] ID: %d | Nama: %s | Total: %.2f kg\n\n", dataWarga[i].id, dataWarga[i].name, dataWarga[i].totalBerat)
 			found = true
 		}
 	}
@@ -288,7 +295,7 @@ func binarySearch(queryID int) {
 	for low <= high {
 		mid := (low + high) / 2
 		if tempData[mid].id == queryID {
-			fmt.Printf("[Ditemukan via Binary] ID: %d | Nama: %s | Total: %.2f kg\n",
+			fmt.Printf("\n[Ditemukan via Binary] ID: %d | Nama: %s | Total: %.2f kg\n\n",
 				tempData[mid].id, tempData[mid].name, tempData[mid].totalBerat)
 			found = true
 			break
@@ -306,7 +313,7 @@ func binarySearch(queryID int) {
 
 func menuUrutWarga() {
 	fmt.Printf("\n=== PENGURUTAN DATA WARGA ===\n")
-	fmt.Printf("1. Urutkan dengan Ascending)\n")
+	fmt.Printf("1. Urutkan dengan Ascending\n")
 	fmt.Printf("2. Urutkan dengan Descending\n")
 	fmt.Printf("Pilih metode (1-2): ")
 	var sub string
@@ -314,11 +321,11 @@ func menuUrutWarga() {
 
 	if sub == "1" {
 		selectionSort()
-		fmt.Printf("Data diurutkan dengan Selection Sort secara Ascending.\n")
+		fmt.Printf("\nData diurutkan dengan Selection Sort secara Ascending.\n\n")
 		showDataWarga()
 	} else if sub == "2" {
 		insertionSort()
-		fmt.Printf("Data diurutkan dengan Insertion Sort secara Descending.\n")
+		fmt.Printf("\nData diurutkan dengan Insertion Sort secara Descending.\n\n")
 		showDataWarga()
 	}
 }
@@ -393,7 +400,7 @@ func tampilkanStatistik() {
 		labelPeriode = fmt.Sprintf("Tahun %d", thn)
 
 	} else {
-		fmt.Printf("Pilihan tidak valid.\n")
+		fmt.Printf("\nPilihan tidak valid.\n\n")
 		return
 	}
 
