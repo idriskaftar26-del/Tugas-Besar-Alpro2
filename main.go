@@ -235,8 +235,9 @@ func catatSetoran() {
 
 func menuCariWarga() {
 	fmt.Printf("\n=== PENCARIAN DATA WARGA ===\n")
-	fmt.Printf("1. Cari Berdasarkan Nama\n")
-	fmt.Printf("2. Cari Berdasarkan ID\n")
+	fmt.Printf("|1. Cari Berdasarkan Nama     |\n")
+	fmt.Printf("|2. Cari Berdasarkan ID       |\n")
+	fmt.Printf("==============================\n")
 	fmt.Printf("Pilih pencarian (1-2): ")
 	var sub string
 	fmt.Scan(&sub)
@@ -313,8 +314,9 @@ func binarySearch(queryID int) {
 
 func menuUrutWarga() {
 	fmt.Printf("\n=== PENGURUTAN DATA WARGA ===\n")
-	fmt.Printf("1. Urutkan dengan Ascending\n")
-	fmt.Printf("2. Urutkan dengan Descending\n")
+	fmt.Printf("|1. Urutkan dengan Ascending   |\n")
+	fmt.Printf("|2. Urutkan dengan Descending  |\n")
+	fmt.Printf("===============================\n")
 	fmt.Printf("Pilih metode (1-2): ")
 	var sub string
 	fmt.Scan(&sub)
@@ -355,10 +357,11 @@ func insertionSort() {
 }
 
 func tampilkanStatistik() {
-	fmt.Printf("\n=== WASTE-TRACK STATISTIK ===\n")
-	fmt.Printf("1. Statistik Berdasarkan Minggu\n")
-	fmt.Printf("2. Statistik Berdasarkan Bulan\n")
-	fmt.Printf("3. Statistik Berdasarkan Tahun\n")
+	fmt.Printf("\n===== WASTE-TRACK STATISTIK =====\n")
+	fmt.Printf("|1. Statistik Berdasarkan Minggu|\n")
+	fmt.Printf("|2. Statistik Berdasarkan Bulan |\n")
+	fmt.Printf("|3. Statistik Berdasarkan Tahun |\n")
+	fmt.Printf("=================================\n")
 	fmt.Printf("Pilih filter statistik (1-3): ")
 	var pilihan string
 	fmt.Scan(&pilihan)
