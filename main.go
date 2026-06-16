@@ -64,11 +64,12 @@ func main() {
 
 func CRUDWarga() { // sub menu
 	fmt.Printf("\n=== MANAJEMEN DATA WARGA ===\n")
-	fmt.Printf("1. Tampilkan Data Warga\n")
-	fmt.Printf("2. Tambah Warga\n")
-	fmt.Printf("3. Edit Data Warga\n")
-	fmt.Printf("4. Hapus Data Warga\n")
-	fmt.Printf("7. Exit\n")
+	fmt.Printf("|1. Tampilkan Data Warga   |\n")
+	fmt.Printf("|2. Tambah Warga           |\n")
+	fmt.Printf("|3. Edit Data Warga        |\n")
+	fmt.Printf("|4. Hapus Data Warga       |\n")
+	fmt.Printf("|7. Exit                   |\n")
+	fmt.Printf("============================\n")
 }
 
 func menuCRUDWarga() { // sub menu choice
@@ -97,7 +98,7 @@ func menuCRUDWarga() { // sub menu choice
 
 func showDataWarga() { // printing data warga
 	if len(dataWarga) == 0 {
-		fmt.Printf("\nData warga kosong\n")
+		fmt.Printf("\nData warga kosong\n\n")
 		return
 	}
 
@@ -178,7 +179,7 @@ func catatSetoran() {
 
 	idx := findIndexByID(targetID)
 	if idx == -1 {
-		fmt.Printf("Warga tidak ditemukan.\n\n")
+		fmt.Printf("\nWarga tidak ditemukan.\n\n")
 		return
 	}
 
@@ -235,9 +236,9 @@ func catatSetoran() {
 
 func menuCariWarga() {
 	fmt.Printf("\n=== PENCARIAN DATA WARGA ===\n")
-	fmt.Printf("|1. Cari Berdasarkan Nama     |\n")
-	fmt.Printf("|2. Cari Berdasarkan ID       |\n")
-	fmt.Printf("==============================\n")
+	fmt.Printf("|1. Cari Berdasarkan Nama   |\n")
+	fmt.Printf("|2. Cari Berdasarkan ID     |\n")
+	fmt.Printf("============================\n")
 	fmt.Printf("Pilih pencarian (1-2): ")
 	var sub string
 	fmt.Scan(&sub)
@@ -266,7 +267,7 @@ func sequentialSearch(query string) {
 		}
 	}
 	if !found {
-		fmt.Printf("Data warga tidak ditemukan.\n")
+		fmt.Printf("\nData warga tidak ditemukan.\n\n")
 	}
 }
 
@@ -308,26 +309,34 @@ func binarySearch(queryID int) {
 	}
 
 	if !found {
-		fmt.Printf("Data warga tidak ditemukan.\n")
+		fmt.Printf("\nData warga tidak ditemukan.\n\n")
 	}
 }
 
 func menuUrutWarga() {
-	fmt.Printf("\n=== PENGURUTAN DATA WARGA ===\n")
-	fmt.Printf("|1. Urutkan dengan Ascending   |\n")
-	fmt.Printf("|2. Urutkan dengan Descending  |\n")
+	fmt.Printf("\n==== PENGURUTAN DATA WARGA ====\n")
+	fmt.Printf("|1. Urutkan dengan Ascending  |\n")
+	fmt.Printf("|2. Urutkan dengan Descending |\n")
 	fmt.Printf("===============================\n")
 	fmt.Printf("Pilih metode (1-2): ")
 	var sub string
 	fmt.Scan(&sub)
 
 	if sub == "1" {
+		if len(dataWarga) == 0 {
+			showDataWarga()
+			return
+		}
 		selectionSort()
-		fmt.Printf("\nData diurutkan dengan Selection Sort secara Ascending.\n\n")
+		fmt.Printf("\nData diurutkan dengan Selection Sort secara Ascending.\n")
 		showDataWarga()
 	} else if sub == "2" {
+		if len(dataWarga) == 0 {
+			showDataWarga()
+			return
+		}
 		insertionSort()
-		fmt.Printf("\nData diurutkan dengan Insertion Sort secara Descending.\n\n")
+		fmt.Printf("\nData diurutkan dengan Insertion Sort secara Descending.\n")
 		showDataWarga()
 	}
 }
@@ -357,11 +366,11 @@ func insertionSort() {
 }
 
 func tampilkanStatistik() {
-	fmt.Printf("\n===== WASTE-TRACK STATISTIK =====\n")
-	fmt.Printf("|1. Statistik Berdasarkan Minggu|\n")
-	fmt.Printf("|2. Statistik Berdasarkan Bulan |\n")
-	fmt.Printf("|3. Statistik Berdasarkan Tahun |\n")
-	fmt.Printf("=================================\n")
+	fmt.Printf("\n====== WASTE-TRACK STATISTIK ======\n")
+	fmt.Printf("|1. Statistik Berdasarkan Minggu  |\n")
+	fmt.Printf("|2. Statistik Berdasarkan Bulan   |\n")
+	fmt.Printf("|3. Statistik Berdasarkan Tahun   |\n")
+	fmt.Printf("===================================\n")
 	fmt.Printf("Pilih filter statistik (1-3): ")
 	var pilihan string
 	fmt.Scan(&pilihan)
@@ -449,7 +458,7 @@ func tampilkanStatistik() {
 
 	fmt.Printf("\nStatistik Akumulasi Sampah %s:\n", labelPeriode)
 	if len(jenisSampah) == 0 {
-		fmt.Printf("Tidak ada jenis sampah yang terdata.\n")
+		fmt.Printf("\nTidak ada jenis sampah yang terdata.\n\n")
 	} else {
 		for i := 0; i < len(jenisSampah); i++ {
 			fmt.Printf("- Sampah %s: %.2f kg\n", jenisSampah[i], beratJenisSampah[i])
