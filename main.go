@@ -98,7 +98,11 @@ func menuCRUDWarga() { // sub menu choice
 
 func showDataWarga() { // printing data warga
 	if len(dataWarga) == 0 {
+<<<<<<< HEAD
 		fmt.Printf("\nData warga kosong\n\n")
+=======
+		fmt.Printf("\nData warga kosong\n")
+>>>>>>> a4fba67ec6ff9e01b1e6a700c75c94742c0dbff1
 		return
 	}
 
@@ -314,21 +318,35 @@ func binarySearch(queryID int) {
 }
 
 func menuUrutWarga() {
+<<<<<<< HEAD
 	fmt.Printf("\n==== PENGURUTAN DATA WARGA ====\n")
 	fmt.Printf("|1. Urutkan dengan Ascending  |\n")
 	fmt.Printf("|2. Urutkan dengan Descending |\n")
 	fmt.Printf("===============================\n")
+=======
+	fmt.Printf("\n=== PENGURUTAN DATA WARGA ===\n")
+	fmt.Printf("1. Urutkan dengan Ascending\n")
+	fmt.Printf("2. Urutkan dengan Descending\n")
+>>>>>>> a4fba67ec6ff9e01b1e6a700c75c94742c0dbff1
 	fmt.Printf("Pilih metode (1-2): ")
 	var sub string
 	fmt.Scan(&sub)
 
 	if sub == "1" {
 		selectionSort()
+<<<<<<< HEAD
 		fmt.Printf("\nData diurutkan dengan Selection Sort secara Ascending.\n")
 		showDataWarga()
 	} else if sub == "2" {
 		insertionSort()
 		fmt.Printf("\nData diurutkan dengan Insertion Sort secara Descending.\n")
+=======
+		fmt.Printf("\nData diurutkan dengan Selection Sort secara Ascending.\n\n")
+		showDataWarga()
+	} else if sub == "2" {
+		insertionSort()
+		fmt.Printf("\nData diurutkan dengan Insertion Sort secara Descending.\n\n")
+>>>>>>> a4fba67ec6ff9e01b1e6a700c75c94742c0dbff1
 		showDataWarga()
 	}
 }
