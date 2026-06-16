@@ -192,7 +192,7 @@ func catatSetoran() {
 		}
 	}
 
-	fmt.Printf("===============================\n")
+	fmt.Printf("===============================\n\n")
 	fmt.Printf("Pilih/Ketik Jenis Sampah (Ketik nama baru jika belum terdaftar):\n")
 	var pilJenis string
 	fmt.Scan(&pilJenis)
@@ -230,7 +230,7 @@ func catatSetoran() {
 	dataWarga[idx].setoran = append(dataWarga[idx].setoran, newTx)
 	dataWarga[idx].jumlahLog++
 	dataWarga[idx].totalBerat += berat
-	fmt.Printf("Setoran Sampah berhasil dicatat pada tanggal %s\n", tanggalFormat)
+	fmt.Printf("\nSetoran Sampah berhasil dicatat pada tanggal %s\n\n", tanggalFormat)
 
 }
 
@@ -378,7 +378,7 @@ func tampilkanStatistik() {
 	var targetPeriode string
 	var labelPeriode string
 	var minggu int
-	filterMinggu := false // flag: apakah perlu cek minggu
+	filterMinggu := false
 
 	if pilihan == "1" {
 		var bulan, tahun int
@@ -391,7 +391,7 @@ func tampilkanStatistik() {
 
 		targetPeriode = fmt.Sprintf("-%02d-%04d", bulan, tahun)
 		labelPeriode = fmt.Sprintf("Minggu %d, Bulan %02d-%d", minggu, bulan, tahun)
-		filterMinggu = true // aktifkan flag
+		filterMinggu = true
 
 	} else if pilihan == "2" {
 		var bln, thn int
@@ -419,13 +419,19 @@ func tampilkanStatistik() {
 	var totalSemua float64 = 0.0
 	beratJenisSampah := make([]float64, len(jenisSampah))
 
+	// TIPE DATA BARU: Map untuk mengelompokkan string log berdasarkan tanggal
+	// Isi string log bisa kamu sesuaikan (misal: "Nama Warga - Jenis - Berat")
+	logPerTanggal := make(map[string][]string)
+
+	// Slice untuk menjaga urutan tanggal agar saat diprint berurutan kronologis
+	var urutanTanggal []string
+
 	for i := 0; i < len(dataWarga); i++ {
 		for j := 0; j < len(dataWarga[i].setoran); j++ {
 			tx := dataWarga[i].setoran[j]
 
 			if len(tx.date) >= len(targetPeriode) && tx.date[len(tx.date)-len(targetPeriode):] == targetPeriode {
-
-				// cek minggu hanya kalau filterMinggu aktif
+				// check minggu hanya kalau filterMinggu aktif
 				if filterMinggu {
 					var tgl int
 					fmt.Sscanf(tx.date[:2], "%d", &tgl)
@@ -442,7 +448,7 @@ func tampilkanStatistik() {
 					}
 
 					if mingguTx != minggu {
-						continue // skip transaksi ini, lanjut ke berikutnya
+						continue
 					}
 				}
 
@@ -452,10 +458,38 @@ func tampilkanStatistik() {
 						beratJenisSampah[k] += tx.berat
 					}
 				}
+
+				// log saving part
+				// Formatting log text
+				teksLog := fmt.Sprintf("Warga: %s, Jenis: %s, Berat: %.2f kg", dataWarga[i].name, tx.jenis, tx.berat)
+
+				// Jika tanggal belum pernah terdaftar di map, masukkan ke slice urutanTanggal
+				if len(logPerTanggal[tx.date]) == 0 {
+					urutanTanggal = append(urutanTanggal, tx.date)
+				}
+				// adding log text to its date group
+				logPerTanggal[tx.date] = append(logPerTanggal[tx.date], teksLog)
 			}
 		}
 	}
 
+	// showing log for each date
+	fmt.Printf("\n====== DETAIL LOG TRANSAKSI (%s) ======\n", labelPeriode)
+	if len(urutanTanggal) == 0 {
+		fmt.Println("Tidak ada transaksi pada periode ini.")
+	} else {
+		// Looping berdasarkan urutan tanggal yang tersimpan
+		for _, tgl := range urutanTanggal {
+			fmt.Printf("\n%s:\n", tgl)
+			// Looping isi transaksi di tanggal tersebut
+			for idx, logItem := range logPerTanggal[tgl] {
+				fmt.Printf("%d. %s\n", idx+1, logItem)
+			}
+		}
+	}
+	fmt.Printf("=============================================\n")
+
+	// print statictics
 	fmt.Printf("\nStatistik Akumulasi Sampah %s:\n", labelPeriode)
 	if len(jenisSampah) == 0 {
 		fmt.Printf("\nTidak ada jenis sampah yang terdata.\n\n")
